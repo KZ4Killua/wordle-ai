@@ -13,6 +13,9 @@ class PatternTestCase(unittest.TestCase):
         self.assertEqual(
             wordle.get_pattern("brass", "stair"), "aygya"
         )
+        self.assertEqual(
+            wordle.get_pattern("aback", "black"), "ayggg"
+        )
 
     def test_matches_pattern(self):
         self.assertTrue(

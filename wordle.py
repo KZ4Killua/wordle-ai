@@ -49,9 +49,14 @@ def get_pattern(guess, solution):
         elif guess[i] not in solution:
             pattern += GRAY
         else:
+            # Look ahead and count the number of greens of that letter 
+            n = 0
+            for j in range(i + 1, WORD_LENGTH):
+                if (solution[j] == guess[i]) and (solution[j] == guess[j]):
+                    n += 1
             # Count the number of occurences of that letter so far
-            n = collections.Counter(guess[:i])[guess[i]] + 1
-            # If the solution has more than n of that letter, add a gray
+            n += collections.Counter(guess[:i])[guess[i]] + 1
+            # If the solution has less than n of that letter, add a gray
             if n > collections.Counter(solution)[guess[i]]:
                 pattern += GRAY
             else:
