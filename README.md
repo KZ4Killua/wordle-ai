@@ -4,7 +4,7 @@ A game playing agent for playing Wordle
 The AI can be started by running wordle.py.
 When started, the AI will suggest a guess eg.
 
-`Guess: umble`
+`Guess: crane`
 
 `pattern: `
 
@@ -22,5 +22,5 @@ ie 'g' for GREEN, 'a' for GRAY, and 'y' for YELLOW
 
 The AI also works in hard mode and will in fact always use all the information gotten from 
 a guess to make the next guesses.
-The AI has a success rate of 90.37% and, when successful, takes an average of 4.58 guesses
+The AI has a success rate of 93.08% and, when successful, takes an average of 4.27 guesses
 to reach a solution.

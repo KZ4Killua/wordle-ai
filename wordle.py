@@ -19,19 +19,21 @@ def load_words(path):
     return set(words)
         
 
-def make_guess(words, possible_solutions):
+def make_guess(possible_solutions, counts):
     """Guesses a word from the set of words given the possible solutions
     we have left."""
-    return random.choice(list(possible_solutions))
+    # Pick the word that uses up the most letters
+    return max(possible_solutions, key=lambda word: sum(counts[c] for c in set(word)))
 
-
-def filter_words(words, guess, pattern):
+def filter_words(words, guess, pattern, counts):
     """Filter out any words that do not match a pattern from an earlier guess."""
     for word in words.copy():
         if not matches_pattern(word, guess, pattern):
+            # Remove the word from the set
             words.remove(word)
-    return words
-
+            # Update counts
+            counts -= collections.Counter(set(word))
+    return words, counts
 
 def matches_pattern(word, guess, pattern):
     """Check whether a word matches a pattern gotten from an earlier guess."""
@@ -55,9 +57,9 @@ def get_pattern(guess, solution):
                 if (solution[j] == guess[i]) and (solution[j] == guess[j]):
                     n += 1
             # Count the number of occurences of that letter so far
-            n += collections.Counter(guess[:i])[guess[i]] + 1
+            n += guess[:i + 1].count(guess[i])
             # If the solution has less than n of that letter, add a gray
-            if n > collections.Counter(solution)[guess[i]]:
+            if n > solution.count(guess[i]):
                 pattern += GRAY
             else:
                 pattern += YELLOW
@@ -72,26 +74,26 @@ def simulate():
     guesses = 0
 
     words = load_words(VALID_GUESSES)
+    # Count how many words have each letter
+    letter_counts = sum((collections.Counter(set(word)) for word in words), start=collections.Counter())
 
     for solution in load_words(SOLUTIONS):
         
         possible_solutions = words.copy()
-        # print(f"Solution: {solution}")
+        counts = letter_counts.copy()
+
         for i in range(ALLOWED_GUESSES):
             # Make a guess
-            guess = make_guess(words, possible_solutions)
-            # print(f"Guess: {guess}")
-            # Compare and get a pattern
+            guess = make_guess(possible_solutions, counts)
+            # Get a pattern
             pattern = get_pattern(guess, solution)
-            # print(f"Pattern: {pattern}")
             # Check to see if we have won
             if pattern == "ggggg":
                 correct += 1
                 guesses += (i + 1)
                 break
             # Remove all words that do not match the pattern
-            possible_solutions = filter_words(possible_solutions, guess, pattern)
-        # print()
+            possible_solutions, counts = filter_words(possible_solutions, guess, pattern, counts)
 
         total += 1
 
@@ -101,13 +103,16 @@ def simulate():
 
 def play():
 
-    # Load all words into a hash table
+    # Load all words
     words = load_words(VALID_GUESSES)
+    # At first, every word is a possible solution
     possible_solutions = words.copy()
+    # Count how many words have each letter
+    counts = sum((collections.Counter(set(word)) for word in possible_solutions), start=collections.Counter())
 
     for i in range(ALLOWED_GUESSES):
         # Make a guess
-        guess = make_guess(words, possible_solutions)
+        guess = make_guess(possible_solutions, counts)
         print(f"Guess: {guess}")
         # Get a pattern
         pattern = input("pattern: ")
@@ -115,7 +120,7 @@ def play():
         if pattern == "ggggg":
             break
         # Remove all words that do not match the pattern
-        possible_solutions = filter_words(possible_solutions, guess, pattern)   
+        possible_solutions, counts = filter_words(possible_solutions, guess, pattern, counts)
 
 
 def main():
