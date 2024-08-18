@@ -12,11 +12,11 @@ It is the job of the user to test that guess and
 tell the AI what pattern of colours that guess gives.
 
 For example, say I try the word "crane" and get the following colour pattern:
-GREEN, GREEN, GRAY, GRAY, YELLOW
+⬜🟨🟩🟨⬜
 
 I will then enter the following:
 
-`pattern: ggaay`
+`pattern: aygya`
 
 ie 'g' for GREEN, 'a' for GRAY, and 'y' for YELLOW
 
